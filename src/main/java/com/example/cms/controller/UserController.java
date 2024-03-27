@@ -20,6 +20,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,9 +50,12 @@ public class UserController {
 	}
 //	
     @GetMapping("users/{userId}")
-	public ResponseEntity<ResponseStructure<UserResponse>> findUniqueUser(@PathVariable int userId ,@RequestBody FindUserRequest findUserRequest){
-		return userService.findById(userId, findUserRequest);
+	public ResponseEntity<ResponseStructure<UserResponse>> findUniqueUser(@PathVariable int userId ){
+		return userService.findById(userId);
 	}
-	
+	@DeleteMapping("users/{userId}")
+	public ResponseEntity<ResponseStructure<UserResponse>> delete(@PathVariable int userId){
+		return userService.deleteById(userId);
+	}
 	
 }

@@ -13,5 +13,6 @@ public interface UserService {
 	ResponseEntity<ResponseStructure<UserResponse>> save(UserRequest userRequest);
 
 	//ResponseEntity<ResponseStructure<UserResponse>> findByUserEmail(String userEmail,FindUserRequest findRequest);
-	ResponseEntity<ResponseStructure<UserResponse>> findById(int userId, FindUserRequest findUserRequest);
+	ResponseEntity<ResponseStructure<UserResponse>> findById(int userId);
+	ResponseEntity<ResponseStructure<UserResponse>> deleteById(int userId);
 }

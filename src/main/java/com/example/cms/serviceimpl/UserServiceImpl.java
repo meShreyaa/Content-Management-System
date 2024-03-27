@@ -18,13 +18,20 @@ import com.example.cms.utility.ResponseStructure;
 
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
 	private UserRepository repository;
 	private PasswordEncoder passwordEncoder;
 	private ResponseStructure<UserResponse> responseStructure;
+
+	public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder,
+			ResponseStructure<UserResponse> responseStructure) {
+		super();
+		this.repository = repository;
+		this.passwordEncoder = passwordEncoder;
+		this.responseStructure = responseStructure;
+	}
 
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponse>> save(UserRequest userRequest) {
@@ -37,65 +44,36 @@ public class UserServiceImpl implements UserService {
 				.setMessage("User registered Successfully").setData(mapToUserResponse(user)));
 	}
 
-	
-
 	private User mapToUserEntity(UserRequest userRequest, User user) {
 		user.setUserName(userRequest.getUserName());
 		user.setUserEmail(userRequest.getUserEmail());
 		user.setUserPassword(passwordEncoder.encode(userRequest.getUserPassword()));
 		return user;
 	}
-	
 
-
-//	@Override
-//	public ResponseEntity<ResponseStructure<UserResponse>> findByUserEmail(String userEmail, FindUserRequest findRequest) {
-//		
-//		if(!repository.existsByUserEmail(findRequest.getUserEmail()))
-//			throw new UserNotFoundById("No User exists with given email");
-//		
-//		User foundUser=repository.findByUserEmail(userEmail, new FindUserRequest());
-//		
-//		return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
-//				.setMessage("User registered Successfully").setData(mapToUserResponse(foundUser)));
-//		
-//	}
-
-
-	
 	private UserResponse mapToUserResponse(User user) {
 		return UserResponse.builder().userId(user.getUserId()).userName(user.getUserName())
-				.userEmail(user.getUserEmail()).createdAt(user.getCreatedAt()).lastModifiedAt(user.getLastModifiedAt()).build();
+				.userEmail(user.getUserEmail()).createdAt(user.getCreatedAt()).lastModifiedAt(user.getLastModifiedAt())
+				.build();
 	}
-
-
 
 	@Override
-	public ResponseEntity<ResponseStructure<UserResponse>> findById(int userId, FindUserRequest findRequest) {
-		if(!repository.existsById(findRequest.getUserId()))
-			throw new UserNotFoundById("No User exists with given email");
-		
-		User foundUser=repository.findById(userId, new FindUserRequest());
-		return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
-			.setMessage("User registered Successfully").setData(mapToUserResponse(foundUser)));
+	public ResponseEntity<ResponseStructure<UserResponse>> deleteById(int userId) {
+		return repository.findById(userId).map(user -> {
+			user.setDeleted(true);
+			repository.save(user);
 
-		
-		
+			return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
+					.setMessage("User Deleted Successfully").setData(mapToUserResponse(user)));
+		}).orElseThrow(() -> new UserNotFoundById("Invalid UserId"));
 	}
 
-
-//	@Override
-//	public ResponseEntity<ResponseStructure<User>> save(UserRequest userRequest) {
-//		return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
-//				.setMessage("User Registered Sucessfully")
-//				.setData(repository.save(mapToUser(userRequest, new User()))));
-//	}
-//	
-//	private User mapToUser(UserRequest userRequest, User user) {
-//		user.setUserName(userRequest.getUserName());
-//		user.setUserEmail(userRequest.getUserEmail());
-//		user.setUserPassword(userRequest.getUserPassword());
-//		return user;
-//	}
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponse>> findById(int userId) {
+		return repository.findById(userId).map(user -> ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
+				.setMessage("User fetched Successfully")
+				.setData(mapToUserResponse(user)))).orElseThrow(()-> new UserNotFoundById("kimujnyhbtgvrfc"));
+				
+	}
 
 }

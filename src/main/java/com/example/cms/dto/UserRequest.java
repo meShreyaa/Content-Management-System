@@ -16,4 +16,5 @@ public class UserRequest {
 	private String userEmail;
 	@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "Enter a valid password with 8 digit of length an Uppercase , a special character and a number")
 	private String userPassword;
+	private boolean deleted;
 }
