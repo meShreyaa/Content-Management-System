@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import com.example.cms.dto.UserRequest;
 import com.example.cms.entity.User;
 import com.example.cms.exception.EmailAlreadyExists;
+import com.example.cms.exception.UserNotFoundById;
+import com.example.cms.findrequestdto.FindUserRequest;
+//import com.example.cms.findrequestdto.FindUserRequest;
 import com.example.cms.repository.UserRepository;
 import com.example.cms.responsedto.UserResponse;
 import com.example.cms.service.UserService;
@@ -34,10 +37,7 @@ public class UserServiceImpl implements UserService {
 				.setMessage("User registered Successfully").setData(mapToUserResponse(user)));
 	}
 
-	private UserResponse mapToUserResponse(User user) {
-		return UserResponse.builder().userId(user.getUserId()).userName(user.getUserName())
-				.userEmail(user.getUserEmail()).createdAt(user.getCreatedAt()).lastModifiedAt(user.getLastModifiedAt()).build();
-	}
+	
 
 	private User mapToUserEntity(UserRequest userRequest, User user) {
 		user.setUserName(userRequest.getUserName());
@@ -45,6 +45,44 @@ public class UserServiceImpl implements UserService {
 		user.setUserPassword(passwordEncoder.encode(userRequest.getUserPassword()));
 		return user;
 	}
+	
+
+
+//	@Override
+//	public ResponseEntity<ResponseStructure<UserResponse>> findByUserEmail(String userEmail, FindUserRequest findRequest) {
+//		
+//		if(!repository.existsByUserEmail(findRequest.getUserEmail()))
+//			throw new UserNotFoundById("No User exists with given email");
+//		
+//		User foundUser=repository.findByUserEmail(userEmail, new FindUserRequest());
+//		
+//		return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
+//				.setMessage("User registered Successfully").setData(mapToUserResponse(foundUser)));
+//		
+//	}
+
+
+	
+	private UserResponse mapToUserResponse(User user) {
+		return UserResponse.builder().userId(user.getUserId()).userName(user.getUserName())
+				.userEmail(user.getUserEmail()).createdAt(user.getCreatedAt()).lastModifiedAt(user.getLastModifiedAt()).build();
+	}
+
+
+
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponse>> findById(int userId, FindUserRequest findRequest) {
+		if(!repository.existsById(findRequest.getUserId()))
+			throw new UserNotFoundById("No User exists with given email");
+		
+		User foundUser=repository.findById(userId, new FindUserRequest());
+		return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
+			.setMessage("User registered Successfully").setData(mapToUserResponse(foundUser)));
+
+		
+		
+	}
+
 
 //	@Override
 //	public ResponseEntity<ResponseStructure<User>> save(UserRequest userRequest) {
