@@ -12,6 +12,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -32,6 +35,11 @@ public class Blog {
 	private String[] topics;
 	private String about;
 	
-	@ManyToMany(mappedBy = "blogs")
-	private List<User> users;
+	
+	@ManyToOne
+	private User user;
+	
+	@OneToOne
+	private ContributionPanel contributionPanel;
+	
 }

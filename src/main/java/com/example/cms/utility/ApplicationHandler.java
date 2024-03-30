@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.example.cms.exception.BlogAlreadyExistsByTitle;
 import com.example.cms.exception.BlogNotFoundById;
 import com.example.cms.exception.EmailAlreadyExists;
+import com.example.cms.exception.PanelNotFoundById;
 import com.example.cms.exception.TitleAlreadyExists;
 import com.example.cms.exception.TopicNotSpecifiedException;
 import com.example.cms.exception.UserNotFoundById;
@@ -26,6 +27,7 @@ public class ApplicationHandler {
 	
 	private ErrorStructure<String> errorStructure;
 
+	@SuppressWarnings("unchecked")
 	private ResponseEntity<ErrorStructure<String>> errorResponse(HttpStatus status, String message, String rootCause){
 		return new ResponseEntity<ErrorStructure<String>>(errorStructure.setStatusCode(status.value()).setMessage(message).setRootCause(rootCause),status);
 	}
@@ -57,5 +59,10 @@ public class ApplicationHandler {
 	@ExceptionHandler
 	public ResponseEntity<ErrorStructure<String>> blogAlreadyExistsByTitle(BlogAlreadyExistsByTitle ex){
 		return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Blog Title Already Exists");
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> PanelNotFoundById(PanelNotFoundById ex){
+		return errorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "Panel Does Not Exists");
 	}
 }

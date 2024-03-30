@@ -36,7 +36,7 @@ public class BlogController {
 		return blogService.updateBlog(blogId, blogRequest);
 	}
 	@GetMapping("/titles/{title}/blogs")
-	public ResponseEntity<ResponseStructure<BlogResponse>> titleAvailability(@PathVariable String title){
+	public ResponseEntity<Boolean> titleAvailability(@PathVariable String title){
 		return blogService.findByTitle(title);
 	}
 }
