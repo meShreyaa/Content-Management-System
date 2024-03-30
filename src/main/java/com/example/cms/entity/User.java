@@ -16,6 +16,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -47,6 +49,10 @@ public class User {
 	private LocalDateTime lastModifiedAt;
 	
 	private boolean deleted;
-	@ManyToMany
+	//@ManyToMany
+	@OneToMany(mappedBy = "user")
 	private List<Blog> blogs;
+	
+	@ManyToMany(mappedBy = "users")
+	private List<ContributionPanel> contributionPanels;
 }

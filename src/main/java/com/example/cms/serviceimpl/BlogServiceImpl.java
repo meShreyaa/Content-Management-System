@@ -1,21 +1,18 @@
 package com.example.cms.serviceimpl;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.cms.dto.BlogRequest;
 import com.example.cms.entity.Blog;
-import com.example.cms.entity.User;
-import com.example.cms.exception.BlogAlreadyExistsByTitle;
+import com.example.cms.entity.ContributionPanel;
 import com.example.cms.exception.BlogNotFoundById;
 import com.example.cms.exception.TitleAlreadyExists;
 import com.example.cms.exception.TopicNotSpecifiedException;
 import com.example.cms.exception.UserNotFoundById;
 import com.example.cms.repository.BlogRepository;
+import com.example.cms.repository.ContributorPanelRepository;
 import com.example.cms.repository.UserRepository;
 import com.example.cms.responsedto.BlogResponse;
 import com.example.cms.service.BlogService;
@@ -29,6 +26,7 @@ public class BlogServiceImpl implements BlogService {
 	
 	private BlogRepository blogRepository;
 	private UserRepository userRepository;
+	private ContributorPanelRepository contributorPanelRepository;
 	private ResponseStructure<BlogResponse> responseStructure;
 
 	@Override
@@ -42,8 +40,12 @@ public class BlogServiceImpl implements BlogService {
 			}
 			Blog blog=mapToBlogs(blogRequest);
 //			blog.setUsers(Arrays.asList(user));
+			ContributionPanel panel=contributorPanelRepository.save(new ContributionPanel());
+			
 			user.getBlogs().add(blog);
-			blogRepository.save(blog);
+			blog.setContributionPanel(panel);
+			blog.setUser(user);
+			blog=blogRepository.save(blog);
 			userRepository.save(user);
 			return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
 					.setMessage("Blog Added Successfully")
@@ -85,15 +87,16 @@ public class BlogServiceImpl implements BlogService {
 			return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
 					.setMessage("Block Updated Successfully")
 					.setData(mapToBlogResponse(exBlog)));
-		}).orElseThrow(() -> new UserNotFoundById("Unaable to Find User with the mentioned ID"));
+		}).orElseThrow(() -> new UserNotFoundById("Unable to Find User with the mentioned ID"));
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<BlogResponse>> findByTitle(String title) {
-		return blogRepository.findByTitle(title).map(blog -> ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
-				.setMessage("true")
-				.setData(mapToBlogResponse(blog)))).orElseThrow(()-> new BlogAlreadyExistsByTitle("False"));
+	public ResponseEntity<Boolean> findByTitle(String title) {
+	
+		return ResponseEntity.ok(blogRepository.existsByTitle(title));
 	}
+
+	
 
 	
 
